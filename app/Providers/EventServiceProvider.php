@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\RequestValidationEvent;
+use App\Listeners\Commands\CreatePhonebookEntrySubscriber;
+use App\Listeners\Commands\UpdatePhonebookEntrySubscriber;
+use App\Listeners\RequestValidationSubscriber;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +22,12 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+    ];
+
+    protected $subscribe = [
+        RequestValidationSubscriber::class,
+        CreatePhonebookEntrySubscriber::class,
+        UpdatePhonebookEntrySubscriber::class
     ];
 
     /**

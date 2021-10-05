@@ -1,0 +1,318 @@
+openapi: 3.1.0
+info:
+  title: Phonebook Api
+  version: '1.0'
+servers:
+  - url: 'http://localhost:80'
+paths:
+  /v1/phonebook/entries:
+    get:
+      summary: Fetch All Phonebook Entries
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    links:
+                      self: 'http://example-app.test/v1/v1/phonebook/entries'
+                    data:
+                      - type: entry
+                        id: 516d1ae8-5286-4c9b-ab43-3db29aca2562
+                        attributes:
+                          first_name: Will
+                          middle_names: Edmund Henry
+                          last_name: Percey
+                          email_address: willpercey@example.com
+                          landline_number: '193986560'
+                          mobile_number: '07455588888'
+                          created_at: '2021-10-05T16:22:23.000000Z'
+                          updated_at: '2021-10-05T16:22:23.000000Z'
+                        links:
+                          self: 'http://example-app.test/v1/entry/516d1ae8-5286-4c9b-ab43-3db29aca2562'
+                      - type: entry
+                        id: c1b1ad95-3d94-45b2-a35f-93aae334156d
+                        attributes:
+                          first_name: James
+                          middle_names: S
+                          last_name: Percey
+                          email_address: jamespercey@example.com
+                          landline_number: '193986560'
+                          mobile_number: '07455588888'
+                          created_at: '2021-10-05T16:22:23.000000Z'
+                          updated_at: '2021-10-05T16:22:23.000000Z'
+                        links:
+                          self: 'http://example-app.test/v1/entry/c1b1ad95-3d94-45b2-a35f-93aae334156d'
+                      - type: entry
+                        id: 429f97e7-2695-42e0-879f-6e691dccd8a9
+                        attributes:
+                          first_name: Bill
+                          middle_names: E
+                          last_name: Turner
+                          email_address: billturner@example.com
+                          landline_number: '193986560'
+                          mobile_number: '07455588888'
+                          created_at: '2021-10-05T16:22:23.000000Z'
+                          updated_at: '2021-10-05T16:22:23.000000Z'
+                        links:
+                          self: 'http://example-app.test/v1/entry/429f97e7-2695-42e0-879f-6e691dccd8a9'
+                      - type: entry
+                        id: 45bc73fd-25b9-4a4a-9ec0-e71553fa92ab
+                        attributes:
+                          first_name: Shannon
+                          middle_names: Jade
+                          last_name: Black
+                          email_address: sjb@example.com
+                          landline_number: '193986560'
+                          mobile_number: '07455588888'
+                          created_at: '2021-10-05T16:22:23.000000Z'
+                          updated_at: '2021-10-05T16:22:23.000000Z'
+                        links:
+                          self: 'http://example-app.test/v1/entry/45bc73fd-25b9-4a4a-9ec0-e71553fa92ab'
+                      - type: entry
+                        id: c050af5b-1894-4efa-8830-246c04459bfb
+                        attributes:
+                          first_name: Ellie
+                          middle_names: May
+                          last_name: Wheeler
+                          email_address: elliemp@example.com
+                          landline_number: '193986560'
+                          mobile_number: '07455588888'
+                          created_at: '2021-10-05T16:22:23.000000Z'
+                          updated_at: '2021-10-05T16:22:23.000000Z'
+                        links:
+                          self: 'http://example-app.test/v1/entry/c050af5b-1894-4efa-8830-246c04459bfb'
+                properties:
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        minLength: 1
+                    readOnly: true
+                  data:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      minProperties: 1
+                      properties:
+                        type:
+                          type: string
+                          minLength: 1
+                        id:
+                          type: string
+                          minLength: 1
+                          readOnly: true
+                        attributes:
+                          $ref: '#/components/schemas/Entry'
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: string
+                              minLength: 1
+                          readOnly: true
+                      required:
+                        - type
+                        - id
+                        - attributes
+                required:
+                  - data
+      operationId: get-v1-phonebook-entries
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: page
+          description: Page Number
+      description: ''
+    post:
+      summary: Create a phonebook entry
+      operationId: post-v1-phonebook-entries
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+      description: Async API to create a phonebook entry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  type: entry
+                  id: 516d1ae8-5286-4c9b-ab43-3db29aca2562
+                  attributes:
+                    first_name: Will
+                    middle_names: Edmund Henry
+                    last_name: Percey
+                    email_address: willpercey@example.com
+                    landline_number: '193986560'
+                    mobile_number: '07455588888'
+                    created_at: '2021-10-05T16:22:23.000000Z'
+                    updated_at: '2021-10-05T16:22:23.000000Z'
+              properties:
+                data:
+                  type: object
+                  required:
+                    - attributes
+                  properties:
+                    attributes:
+                      $ref: '#/components/schemas/Entry'
+              required:
+                - data
+            examples:
+              Example Create Request:
+                data:
+                  attributes:
+                    first_name: Will
+                    middle_names: Edmund Henry
+                    last_name: Percey
+                    email_address: willpercey@example.com
+                    mobile_number: '07455588888'
+  '/v1/phonebook/entries/{uuid}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: uuid
+        in: path
+        required: true
+    get:
+      summary: Fetch a single phonebook entry
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+      operationId: get-v1-phonebook-entries-uuid
+    patch:
+      summary: Update a phonebook entry
+      operationId: patch-v1-phonebook-entries-uuid
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+      description: Async API to Update phonebook entry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  type: entry
+                  id: 516d1ae8-5286-4c9b-ab43-3db29aca2562
+                  attributes:
+                    first_name: Will
+                    middle_names: Edmund Henry
+                    last_name: Percey
+                    email_address: willpercey@example.com
+                    landline_number: '193986560'
+                    mobile_number: '07455588888'
+                    created_at: '2021-10-05T16:22:23.000000Z'
+                    updated_at: '2021-10-05T16:22:23.000000Z'
+              properties:
+                data:
+                  type: object
+                  required:
+                    - attributes
+                  properties:
+                    attributes:
+                      $ref: '#/components/schemas/Entry'
+              required:
+                - data
+            examples:
+              Example Request Body:
+                type: entry
+                id: 516d1ae8-5286-4c9b-ab43-3db29aca2562
+                attributes:
+                  first_name: Will
+                  middle_names: Edmund Henry
+                  last_name: Percey
+                  email_address: willpercey@example.com
+                  landline_number: '193986560'
+                  mobile_number: '07455588888'
+                  created_at: '2021-10-05T16:22:23.000000Z'
+                  updated_at: '2021-10-05T16:22:23.000000Z'
+        description: ''
+components:
+  schemas:
+    Entry:
+      description: ''
+      type: object
+      x-examples:
+        example-1:
+          first_name: Ellie
+          middle_names: May
+          last_name: Wheeler
+          email_address: elliemp@example.com
+          landline_number: '193986560'
+          mobile_number: '07455588888'
+          created_at: '2021-10-05T16:22:23.000000Z'
+          updated_at: '2021-10-05T16:22:23.000000Z'
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+        middle_names:
+          type: string
+          minLength: 1
+        last_name:
+          type: string
+          minLength: 1
+        email_address:
+          type: string
+          minLength: 1
+          format: email
+        landline_number:
+          type: string
+          minLength: 1
+        mobile_number:
+          type: string
+          minLength: 1
+        created_at:
+          type: string
+          minLength: 1
+        updated_at:
+          type: string
+          minLength: 1
+      required:
+        - first_name
+        - last_name
+        - email_address
+        - mobile_number
