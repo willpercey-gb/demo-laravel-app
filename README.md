@@ -1,64 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Phonebook Documentation
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Introduction
+This is the `Phonebook API` Repository. This project utilises Laravel 8, Laravel Sail.
 
-## About Laravel
+This project follows the Repository, CQRS, and Simple Event Messaging patterns.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Initial Checks
+Free ports: Please ensure that you're not running MySQL or any HTTP(s) server on your host machine. For example, if you already have MySQL or Apache running on your host machine you'll need to stop those services so the ports become available.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Please shutdown any running docker containers.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Setup: Prerequisites
+Please have docker installed and configured.
+Install [Docker for Desktop](https://www.docker.com/products/docker-desktop) tool, for your OS.
 
-## Learning Laravel
+- Open command prompt / shell to the location where you cloned the repository
+- Type `sail up` and it will start provisioning the envrionment
+    - If this is the first time you're doing this it may take a while to download all required images from the internet and build these images on your machine.
+    - Later runs will always be quicker.
+- Type `sail run bash` and you will be taken to your docker container
+- Run `php artisan migrate && php artisan db:seed` to get your database set up
+- There are no SSL certificates to import this app runs locally on http
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## OpenApi
+This api is documented in OpenApi, all API Requests are validated against this schema.
 
-## Laravel Sponsors
+Schema validation must pass before a request can continue.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+The OpenApi schema can be found in the yaml file located at `openapi/phonebook-api.yaml`
 
-### Premium Partners
+## Postman
+**To setup your API in Postman, first click "Import"**
+![](https://i.imgur.com/wUBOHHu.png)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
+**Select the "File" option and find the `openapi/phonebook-api.yaml` file in the project directory**
+![](https://i.imgur.com/uAUH3lM.png)
 
-## Contributing
+**Import and navigate back to collecitons.
+You should now have a Phonebook API Colleciton and Postman Test Suite**
+![](https://i.imgur.com/ILiB4SJ.png)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**Click on the colleciton name and add the following pre-request script**
+![](https://i.imgur.com/7sL1YQu.png)
+```
+const accessTokenReq = {
+    url: `${pm.collectionVariables.get('baseUrl')}/v1/auth/login`,
+    method: 'POST',
+    header: 'Content-Type: application/json',
+    body: {
+      mode: 'application/json',
+      raw: JSON.stringify({
+        email: 'test@example.com',
+        password: 'HelloWorld123@'
+      })
+    }
+  };
+  let getToken = true;
+  if (pm.environment.get('accessTokenExpiry') && pm.environment.get('currentAccessToken') && pm.environment.get('accessTokenExpiry') <= new Date().getTime()) {
+    getToken = false;
+  }
+  if (getToken) {
+    pm.sendRequest(accessTokenReq, function (err, res) {
+      if (err) {
+        console.error(err);
+      }
+      const {access_token,expires_in} = res.json();
+      pm.environment.set('currentAccessToken', access_token);
+      let expiryDate = new Date();
+      expiryDate.setSeconds(expiryDate.getSeconds() + expires_in);
+      pm.environment.set('accessTokenExpiry', expiryDate.getTime());
+    });
+  }
+```
+**Finally Switch to the authorisation tab select type Bearer Token and add `{{currentAccessToken}}` as the token value and this will automatically keep your JWT token up to date for ongoing requests**
+![](https://i.imgur.com/D9GVlAS.png)
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## You can now test the API!
+![](https://i.imgur.com/CwhpBpP.png)
