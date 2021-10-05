@@ -10,15 +10,24 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.54",
         "laravel/sanctum": "^2.11",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+        "league/openapi-psr7-validator": "^0.16.3",
+        "neomerx/json-api": "^4.0",
+        "nyholm/psr7": "^1.4",
+        "spatie/data-transfer-object": "^3.7",
+        "spatie/laravel-route-attributes": "^1.9",
+        "symfony/psr-http-message-bridge": "^2.1",
+        "symfony/uid": "^5.3",
+        "symfony/validator": "^5.3",
+        "tymon/jwt-auth": "dev-develop"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",
-        "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^5.10",
-        "phpunit/phpunit": "^9.5.8"
+        "mockery/mockery": "^1.4.2",
+        "nunomaduro/collision": "^5.0",
+        "phpunit/phpunit": "^9.3.3"
     },
     "autoload": {
         "psr-4": {
